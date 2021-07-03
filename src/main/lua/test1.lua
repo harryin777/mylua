@@ -103,6 +103,75 @@ end
 -- 这条语句会报错
 -- print("tempInner:" ..tempInner2)
 
--- lua的标准输入
-putIn = io.read("*n")
-print(putIn)
+-- lua的标准输入，是阻塞的
+--putIn = io.read("*n")
+--print(putIn)
+
+-- 函数
+function test1()
+    print("这里是test1函数，正在调用")
+end
+
+test1()
+
+function test2(param)
+    print("这里是test2函数，正在调用，参数:"..param)
+    return 1000
+end
+
+local res = test2("tset")
+print("test2函数的返回值:".. res)
+
+-- table 的用法 ，像数组，但是也像map
+table1 = { 9, 55, 2, 33, 67}
+print("table1[1]:"..table1[1])
+
+table2 = {["key1"]=99, ["key2"]=55}
+print("key2:"..table2["key2"])
+-- 数组for循环，array是有序的
+for k, v in ipairs(table1) do
+    print("array key:"..k..";val:"..v)
+end
+-- map for循环 注意i的区别，同时map是无序的
+for k, v in pairs(table2) do
+    print("map key:"..k..";val:"..v)
+end
+--不用中括号和双引号，table也是可以的
+table3 = {x = 1, y = 2}
+
+local loc = {x = 10, y = 12}
+print(loc)
+
+
+
+
+-- metatable 也是一个table，这个table中定义了一些和该metatable关联的变量，在特定情况下的一些操作，比如非数字变量进行加法操作时
+-- 就会去检查metatable中的__add 如果发现这个函数被定义了，那么就去调用他
+-- meta methods，我的理解就是自定义一些运算规则
+-- 下面这一行是重要的，因为它声明了一个结构，可以理解成后面的函数是golang里的方法，而不仅仅是一个函数
+local vector3d = {}
+local meta = {}
+
+function vector3d.new(x, y, z)
+    local v = {x = x, y = y, z = z}
+    -- 把vector3d这个变量和meta联系起来了
+    setmetatable(v, meta)
+    return v
+end
+
+-- 这个函数定义了，如果两个变量同属于vector3d，那么他们的add方法定义成如下
+function vector3d.add(v1, v2)
+    return vector3d.new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
+end
+meta.__add = vector3d.add
+
+function vector3d.tostring(v)
+    return "x:"..v.x.."; y:"..v.y.."; z:"..v.z
+end
+meta.__tostring = vector3d.tostring
+
+velocity1 = vector3d.new(10, 5, 6)
+velocity2 = vector3d.new(8, 2, 4)
+res = velocity1 + velocity2
+print(res.x)
+print(res)
