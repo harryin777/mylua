@@ -128,7 +128,7 @@ print("table1[1]:"..table1[1])
 
 table2 = {["key1"]=99, ["key2"]=55}
 print("key2:"..table2["key2"])
--- 数组for循环，array是有序的
+-- 数组for循环，array是有序的，数组可以用ipairs 或者是pairs
 for k, v in ipairs(table1) do
     print("array key:"..k..";val:"..v)
 end
@@ -164,7 +164,7 @@ function vector3d.add(v1, v2)
     return vector3d.new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
 end
 meta.__add = vector3d.add
-
+-- 注意 tostring的方法最后是有返回值的
 function vector3d.tostring(v)
     return "x:"..v.x.."; y:"..v.y.."; z:"..v.z
 end
@@ -175,3 +175,56 @@ velocity2 = vector3d.new(8, 2, 4)
 res = velocity1 + velocity2
 print(res.x)
 print(res)
+
+
+
+-- 面向对象编程，lua也可以new一个新的对象，创建新的对象的时候，不需要额外指定一个meta来作为metatable
+-- 上面需要额外指定的原因是，vector3d并不是一个对象，它只是一个table
+-- lua中的self 相当于其他面向对象编程的this
+print("开始面向对象编程")
+fighter = {
+    name = "",
+    age = 0,
+    gender = 0
+}
+
+-- --------------------------------以下是lua的方法，就类比golang的方法和函数的区别
+function fighter:punch()
+    print("fighter:"..self.name.."is going to punch")
+end
+
+function fighter:tostring()
+    print("这是fighter:"..self.name..";年龄"..self.age..";性别"..self.gender)
+end
+
+
+-- 类比java的构造方法
+function fighter:new(t)
+    -- 注意这个初始化的写法，如果t是空，那么就分配一个空table，如果不是空就是他本身
+    t = t or {}
+    -- 注意这里设置了metatable，只有把metatable设置为self才可以调用对象自身的方法
+    setmetatable(t, self)
+    -- 所有定义的函数可以理解成放在了一个map里，这里就是当需要调用的val或者是函数没有在对象体内声明的时候，会去metatable里找
+    self.__index = self
+    return t
+end
+
+
+fighter1 = fighter:new({name = "hahaha", age = 111, gender = 0})
+fighter1:tostring()
+fighter1:punch()
+
+
+-- lua的可变参数
+function manyParameters(...)
+    local arguments = {...}
+    for i, v in ipairs(arguments) do
+        print(v)
+    end
+    a, b, c = ...
+    print(a)
+    print(b)
+    print(c)
+end
+
+manyParameters(1,2,6,7)
