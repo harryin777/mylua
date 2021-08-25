@@ -228,3 +228,19 @@ function manyParameters(...)
 end
 
 manyParameters(1,2,6,7)
+
+-- lua 的类型判断
+ans = {
+    a="v2",
+}
+for i, v in pairs(ans) do
+    -- ngx.log(ngx.INFO, "i: "..i.." v: "..v)
+    print("i: "..i.." v: "..v)
+end
+
+if type(ans) == "table" then
+    print("这是一个 table")
+end
+
+
+print(package.cpath)
