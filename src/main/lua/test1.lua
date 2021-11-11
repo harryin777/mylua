@@ -129,6 +129,7 @@ print("table1[1]:"..table1[1])
 table2 = {["key1"]=99, ["key2"]=55}
 print("key2:"..table2["key2"])
 -- 数组for循环，array是有序的，数组可以用ipairs 或者是pairs
+-- table 只能用 pairs
 for k, v in ipairs(table1) do
     print("array key:"..k..";val:"..v)
 end

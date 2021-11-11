@@ -115,33 +115,27 @@ local function boolean2json(key, value)
     return string.format("\"%s\":%s,", key, tostring(value))
 end
 
-local function array2json(key, value)
+function array2json(key, value)
     local str = "["
-    for k, v in pairs(value) do
-        str = str .. luaJson.table2json(v) .. ","
+    for k, v in ipairs(value) do
+        str = str .. luaJson.val2json(v) .. ","
     end
     str = string.sub(str, 1, string.len(str) - 1) .. "]"
     return string.format("\"%s\":%s,", key, str)
 end
 
-local function isArrayTable(t)
+function isArrayTable(t)
     
     if type(t) ~= "table" then
         return false
     end
     
-    local n = #t
-    for i, v in pairs(t) do
-        if type(i) ~= "number" then
-            return false
-        end
-        
-        if i > n then
-            return false
-        end
+    local flag = false
+    for i, v in ipairs(t) do
+        flag = true
     end
     
-    return true
+    return flag
 end
 
 local function table2json(key, value)
@@ -253,6 +247,18 @@ function luaJson.table2json(tab)
     end
     str = string.sub(str, 1, string.len(str) - 1)
     return str .. "}"
+end
+
+function luaJson.val2json(v)
+    local str = nil
+    if type(v) == "string" then
+        str = string.format("%s", v)
+    elseif type(v) == "number" then
+        str = string.format("%s", v)
+    elseif type(v) == "boolean" then
+        str = string.format("%s", tostring(v))
+    end
+    return str
 end
 
 
